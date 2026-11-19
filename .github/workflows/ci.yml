@@ -10,8 +10,23 @@ permissions:
   contents: read
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Install Python 3.12
+        run: uv python install 3.12
+      - name: Ruff check
+        run: uv run --python 3.12 ruff check agentpilot/src/ --config agentpilot/pyproject.toml
+      - name: Mypy
+        run: uv run --python 3.12 mypy agentpilot/src/agentpilot/domain/ --config-file agentpilot/pyproject.toml
+
   test:
     runs-on: ubuntu-latest
+    needs: lint
     strategy:
       matrix:
         python-version: ["3.11", "3.12"]
@@ -24,3 +39,15 @@ jobs:
         run: uv python install ${{ matrix.python-version }}
       - name: Run tests
         run: uv run --python ${{ matrix.python-version }} pytest tests/ -v
+
+  secrets-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_CONFIG: .gitleaks.toml
