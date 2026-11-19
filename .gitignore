@@ -69,8 +69,6 @@ cython_debug/
 
 # Local verification and draft material
 /.local-backups/
-tests/
-test_*.py
 /arena/data/aime_harbor_tasks/
 /pytest-of-*/
 /README_templete.md
