@@ -1,0 +1,9 @@
+[extend]
+# Extend the default gitleaks config.
+
+[allowlist]
+paths = [
+    '''arena/src/rsi_arena/benchmarks/tb21/campaign\.py''',
+    '''openspace/legacy/v1/openspace/utils/telemetry/telemetry\.py''',
+    '''openspace/openspace/utils/telemetry/telemetry\.py''',
+]
